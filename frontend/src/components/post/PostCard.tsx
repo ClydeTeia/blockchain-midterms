@@ -1,6 +1,6 @@
 import { formatEther } from "ethers";
 import { useMemo, useState } from "react";
-import { formatDate, isVideoUrl, shortenAddress } from "../../lib/format";
+import { formatDate, formatEth, isVideoUrl, shortenAddress } from "../../lib/format";
 import type { PostViewModel } from "../../types/post";
 import { LikeButton } from "./LikeButton";
 
@@ -69,8 +69,11 @@ export function PostCard({ canLike, isLiking, likeCostEth, onLikePost, post }: P
             await onLikePost(post.id);
           }}
         />
+        <span className="text-[12px] font-semibold drop-shadow-md">
+          {post.likes.toString()} {post.likes === 1n ? "like" : "likes"}
+        </span>
         <span className="text-[13px] font-bold drop-shadow-md">
-          {Number(formatEther(post.totalEarned)).toFixed(3)} ETH
+          {formatEth(formatEther(post.totalEarned), 4)} ETH
         </span>
       </div>
     </article>

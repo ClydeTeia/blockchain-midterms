@@ -25,7 +25,9 @@ export function FeedViewport({
   onLoadMorePosts,
   posts,
 }: FeedViewportProps) {
+  const viewportRef = useRef<HTMLElement | null>(null);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const wheelLockRef = useRef(false);
 
   const shouldObserve = useMemo(
     () => posts.length > 0 && hasMorePosts && !isLoadingMorePosts,
@@ -53,6 +55,47 @@ export function FeedViewport({
     return () => observer.disconnect();
   }, [onLoadMorePosts, shouldObserve]);
 
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) {
+      return;
+    }
+
+    const onWheel = (event: WheelEvent) => {
+      // Keep natural behavior on touch devices; tune wheel/trackpad on desktop.
+      if (Math.abs(event.deltaY) < 8 || wheelLockRef.current) {
+        return;
+      }
+
+      event.preventDefault();
+
+      const pageHeight = viewport.clientHeight || 1;
+      const currentIndex = Math.round(viewport.scrollTop / pageHeight);
+      const direction = event.deltaY > 0 ? 1 : -1;
+      const maxIndex = Math.max(0, posts.length - 1);
+      const targetIndex = Math.min(maxIndex, Math.max(0, currentIndex + direction));
+
+      if (targetIndex === currentIndex) {
+        return;
+      }
+
+      wheelLockRef.current = true;
+      viewport.scrollTo({
+        top: targetIndex * pageHeight,
+        behavior: "smooth",
+      });
+
+      window.setTimeout(() => {
+        wheelLockRef.current = false;
+      }, 380);
+    };
+
+    viewport.addEventListener("wheel", onWheel, { passive: false });
+    return () => {
+      viewport.removeEventListener("wheel", onWheel);
+    };
+  }, [posts.length]);
+
   if (isLoadingFeed) {
     return (
       <section className="grid h-[100dvh] w-full place-items-center bg-black text-sm text-muted-foreground">
@@ -73,7 +116,11 @@ export function FeedViewport({
   }
 
   return (
-    <section className="relative h-[100dvh] w-full snap-y snap-mandatory overflow-x-hidden overflow-y-auto bg-black no-scrollbar">
+    <section
+      ref={viewportRef}
+      className="relative h-[100dvh] w-full snap-y snap-mandatory overflow-x-hidden overflow-y-auto bg-black no-scrollbar overscroll-y-contain"
+      style={{ WebkitOverflowScrolling: "touch" }}
+    >
       {posts.map((post) => (
         <div key={post.id.toString()} className="h-[100dvh] w-full snap-start snap-always">
           <div className="mx-auto h-full w-full max-w-[560px]">
