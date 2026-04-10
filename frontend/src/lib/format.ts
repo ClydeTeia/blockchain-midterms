@@ -12,7 +12,16 @@ export function formatEth(value: string, decimals = 4): string {
     return value;
   }
 
-  return parsed.toFixed(decimals);
+  if (parsed === 0) {
+    return "0";
+  }
+
+  const abs = Math.abs(parsed);
+  const requiredDecimals =
+    abs < 1 ? Math.min(8, Math.max(decimals, Math.ceil(-Math.log10(abs)) + 1)) : decimals;
+
+  const fixed = parsed.toFixed(requiredDecimals);
+  return fixed.replace(/(?:\.0+|(\.\d*?[1-9])0+)$/, "$1");
 }
 
 export function formatDate(ts: bigint): string {

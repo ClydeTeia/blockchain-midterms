@@ -29,14 +29,20 @@ export function LikeButton({ isDisabled, isLiked, isLoading, likeCostEth, onClic
       onClick={() => void handleClick()}
       disabled={isDisabled || isLoading}
       className={cn(
-        "flex h-14 w-14 items-center justify-center rounded-full border border-border bg-black/45 text-foreground backdrop-blur-sm transition",
-        isLiked && "bg-[#ff6b78] text-black",
+        "flex h-14 w-14 items-center justify-center bg-transparent transition",
         isAnimating && "animate-pop",
         (isDisabled || isLoading) && "opacity-60",
       )}
       title={isLiked ? "Liked" : `Like with ${likeCostEth} ETH`}
     >
-      <Heart className={cn("h-6 w-6", isLiked && "fill-current")} />
+      <Heart
+        className={cn(
+          "h-8 w-8 transition-colors drop-shadow-[0_0_2px_rgba(0,0,0,0.95)]",
+          isLiked
+            ? "fill-current text-[#ff2d55]"
+            : "text-white mix-blend-difference",
+        )}
+      />
       <span className="sr-only">Like post</span>
     </button>
   );
