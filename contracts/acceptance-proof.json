@@ -1,0 +1,53 @@
+{
+  "contractAddress": "0x95aaC5D03020DB1797aDE432605E16EDd9219A49",
+  "walletA": "0xBFD5EF4F22d449a5100EDB0adb2866ecB597C1B6",
+  "walletB": "0xE65Aa1dFbF3B4B52f423776066A7CC65dE435e1C",
+  "steps": {
+    "fundWalletB": {
+      "hash": "0xbc827199f30305be0a0798764c17978f1cc5108d27bc723982f4b01598bd3f2f",
+      "status": 1
+    },
+    "createPost": {
+      "hash": "0xc6634d068bb191977b17d560b62a6434d12f8f8d8b3ddcb14e6e666ed69774da",
+      "postId": "4",
+      "status": 1
+    },
+    "likePost": {
+      "hash": "0x0280cac3be198e4ad7288d871edd6891ebba6bd0a503b7bb07853c038245302a",
+      "status": 1,
+      "likeCostWei": "100000000000000"
+    },
+    "doubleLike": {
+      "hash": "0xeae44dc7dd550629598e58e9aeccfcbee68f16997d9e1b3fb90eac717c1902fc",
+      "expectedError": "AlreadyLiked",
+      "observed": "transaction execution reverted"
+    },
+    "selfLike": {
+      "hash": "0x22ab0c3598439ef72b8e0fc58838efa64a782375bbc66d897e51cbd5b383c2d5",
+      "expectedError": "CannotLikeOwnPost",
+      "observed": "transaction execution reverted"
+    },
+    "rejectReceiverDeploy": {
+      "hash": "0x50e9464a70a9359c7f695eaf800cb0344ab70ce95c40b63809f82ef8022107bb",
+      "receiver": "0xB1122ebe0F70BafFaf5687199068581A185bf4BA",
+      "status": 1
+    },
+    "rejectCreatePost": {
+      "hash": "0xe1b43c1b5b33ca92a482d2f6274668f71ab26773ee3a8933aeef9a19846a3a3f",
+      "postId": "5",
+      "status": 1
+    },
+    "escrowLike": {
+      "hash": "0xa67490348c4565305731a9c56d83198b9b8e9be78f8c9b885cc9371f44f9431c",
+      "status": 1,
+      "tipEscrowedEvent": true
+    },
+    "withdrawEscrow": {
+      "hash": "0x4256e50e27e693797e5d4e8ae591bf07fff196cbc999390f374a2b002d3b6d56",
+      "status": 1
+    }
+  },
+  "deployment": {
+    "contractCodePresent": true
+  }
+}

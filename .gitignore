@@ -1,0 +1,10 @@
+# Root ignores
+.env
+.env.*
+!.env.example
+node_modules/
+artifacts/
+cache/
+dist/
+coverage/
+.DS_Store
