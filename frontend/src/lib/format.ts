@@ -30,8 +30,19 @@ export function formatDate(ts: bigint): string {
 }
 
 export function isVideoUrl(url: string): boolean {
-  const normalized = url.toLowerCase();
-  return [".mp4", ".webm", ".ogg", ".mov", ".m4v", ".m3u8"].some((ext) =>
-    normalized.includes(ext),
-  );
+  const normalized = url.trim().toLowerCase();
+  const videoExts = [".mp4", ".webm", ".ogg", ".mov", ".m4v", ".m3u8"];
+
+  try {
+    const parsed = new URL(normalized);
+    const pathname = parsed.pathname.toLowerCase();
+    if (videoExts.some((ext) => pathname.endsWith(ext))) {
+      return true;
+    }
+
+    const queryBlob = `${parsed.search}${parsed.hash}`.toLowerCase();
+    return videoExts.some((ext) => queryBlob.includes(ext.slice(1)));
+  } catch {
+    return videoExts.some((ext) => normalized.includes(ext));
+  }
 }

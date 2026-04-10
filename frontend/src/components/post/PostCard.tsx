@@ -1,5 +1,5 @@
 import { formatEther } from "ethers";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { formatDate, formatEth, isVideoUrl, shortenAddress } from "../../lib/format";
 import type { PostViewModel } from "../../types/post";
 import { LikeButton } from "./LikeButton";
@@ -13,8 +13,28 @@ interface PostCardProps {
 }
 
 export function PostCard({ canLike, isLiking, likeCostEth, onLikePost, post }: PostCardProps) {
-  const [mediaBroken, setMediaBroken] = useState(false);
   const asVideo = useMemo(() => isVideoUrl(post.imageUrl), [post.imageUrl]);
+  const [mediaMode, setMediaMode] = useState<"video" | "image">(asVideo ? "video" : "image");
+  const [hasRetriedAsOtherType, setHasRetriedAsOtherType] = useState(false);
+  const [mediaBroken, setMediaBroken] = useState(false);
+
+  useEffect(() => {
+    setMediaMode(asVideo ? "video" : "image");
+    setHasRetriedAsOtherType(false);
+    setMediaBroken(false);
+  }, [asVideo, post.imageUrl]);
+
+  const likelyHls = useMemo(() => post.imageUrl.toLowerCase().includes(".m3u8"), [post.imageUrl]);
+
+  const onMediaLoadError = () => {
+    if (!hasRetriedAsOtherType) {
+      setHasRetriedAsOtherType(true);
+      setMediaMode((current) => (current === "video" ? "image" : "video"));
+      return;
+    }
+
+    setMediaBroken(true);
+  };
 
   const likeDisabled = !canLike || isLiking || post.hasLiked || post.isOwnPost;
 
@@ -22,7 +42,7 @@ export function PostCard({ canLike, isLiking, likeCostEth, onLikePost, post }: P
     <article className="relative h-full w-full overflow-hidden bg-black">
       <div className="absolute inset-0 flex items-center justify-center bg-black">
         {!mediaBroken ? (
-          asVideo ? (
+          mediaMode === "video" ? (
             <video
               src={post.imageUrl}
               className="h-auto w-auto max-h-full max-w-full object-contain object-center"
@@ -30,19 +50,21 @@ export function PostCard({ canLike, isLiking, likeCostEth, onLikePost, post }: P
               loop
               muted
               playsInline
-              onError={() => setMediaBroken(true)}
+              onError={onMediaLoadError}
             />
           ) : (
             <img
               src={post.imageUrl}
               alt={post.caption}
               className="h-auto w-auto max-h-full max-w-full object-contain object-center"
-              onError={() => setMediaBroken(true)}
+              onError={onMediaLoadError}
             />
           )
         ) : (
-          <div className="grid h-full w-full place-items-center bg-[#111] text-sm text-muted-foreground">
-            Media failed to load
+          <div className="grid h-full w-full place-items-center bg-[#111] px-6 text-center text-sm text-muted-foreground">
+            {likelyHls
+              ? "Media failed to load. This looks like an HLS stream (.m3u8), which may not play in this browser."
+              : "Media failed to load. Check if the URL is public, embeddable, and browser-supported."}
           </div>
         )}
       </div>
