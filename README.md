@@ -113,7 +113,7 @@ npm run build
 
 ## Required Submission Values
 - GitHub Repo: `https://github.com/ClydeTeia/blockchain-midterms`
-- Live Frontend URL: `https://blockchain-midterms.vercel.app`
+- Live Frontend URL: `[https://blockchain-midterms.vercel.app](https://blockchain-midterms-kdap.vercel.app/)`
 - Sepolia Contract Address: `0x95aaC5D03020DB1797aDE432605E16EDd9219A49`
 - Sepolia Etherscan URL: `https://sepolia.etherscan.io/address/0x95aaC5D03020DB1797aDE432605E16EDd9219A49`
 
